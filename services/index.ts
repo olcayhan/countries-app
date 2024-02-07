@@ -1,12 +1,12 @@
 "use client";
 
 import client from "@/app/apollo-client";
-import { Continent } from "@/components/ListBox";
+import { Continent, Country } from "@/types";
 import { gql } from "@apollo/client";
 import { useEffect, useState } from "react";
 
 export function getCountries() {
-  const [data, setData] = useState<any[] | null>(null);
+  const [data, setData] = useState<Country[] | null>(null);
   const [isLoading, setLoading] = useState<boolean>(true);
 
   const mutate = async () => {
