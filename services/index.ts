@@ -1,8 +1,8 @@
 "use client";
 
 import client from "@/app/apollo-client";
-import { Continent, Country } from "@/types";
 import { gql } from "@apollo/client";
+import { Continent, Country } from "@/types";
 import { useEffect, useState } from "react";
 
 export function getCountries() {
@@ -16,19 +16,9 @@ export function getCountries() {
           countries {
             code
             name
-            native
-            capital
-            emoji
-            currency
             phone
+            emoji
             continent {
-              code
-              name
-            }
-            states {
-              name
-            }
-            languages {
               code
               name
             }
@@ -50,6 +40,7 @@ export function getCountries() {
 
 export function getContinents() {
   const [data, setData] = useState<Continent[] | null>(null);
+  const [isLoading, setLoading] = useState<boolean>(true);
 
   const mutate = async () => {
     const query = await client.query({
@@ -63,11 +54,12 @@ export function getContinents() {
       `,
     });
     setData(query.data.continents);
+    setLoading(false);
   };
 
   useEffect(() => {
     mutate();
   });
 
-  return data;
+  return { data, isLoading };
 }

@@ -2,13 +2,18 @@
 import { getContinents, getCountries } from "@/services";
 import { Continent, Country } from "@/types";
 import React, { useState } from "react";
+import ListItem from "./ListItem";
 
 export default function ListBox() {
-  const continents: Continent[] | null = getContinents();
+  const {
+    data: continents,
+    isLoading: isLoadingCont,
+  }: { data: Continent[] | null; isLoading: boolean } = getContinents();
   const {
     data: countries,
     isLoading,
   }: { data: Country[] | null; isLoading: boolean } = getCountries();
+
   const [cont, setContinent] = useState<string>("");
   const [search, setSearch] = useState<string>("");
   const [activeIndex, setActiveIndex] = useState<number | null>(null);
@@ -40,11 +45,12 @@ export default function ListBox() {
         <select
           className="col-span-3 border border-neutral-500 px-2 py-1 rounded-md outline-none focus:border-neutral-700"
           onChange={handleSelectChange}
+          disabled={isLoadingCont}
         >
           <option value="">All</option>
-          {continents?.map((continent: Continent | null) => (
-            <option value={continent?.code} key={continent?.code}>
-              {continent?.name}
+          {continents?.map((continent: Continent) => (
+            <option value={continent.code} key={continent.code}>
+              {continent.name}
             </option>
           ))}
         </select>
@@ -78,19 +84,13 @@ export default function ListBox() {
                 setActiveIndex(index);
               }
               return (
-                <button
-                  className={`grid grid-cols-12 gap-3 p-5 border w-full rounded-md ${
-                    activeIndex === index ? "bg-green-300" : ""
-                  } hover:border-slate-500 transition-all cursor-pointer`}
+                <ListItem
+                  handleClick={handleClick}
+                  country={country}
                   key={index}
-                  onClick={() => handleClick(index)}
-                >
-                  <p className="col-span-1">{country.code}</p>
-                  <p className="col-span-3">{country.name}</p>
-                  <p className="col-span-4">{country.continent.name}</p>
-                  <p className="col-span-2">{country.phone}</p>
-                  <p className="col-span-2 text-lg">{country.emoji}</p>
-                </button>
+                  index={index}
+                  activeIndex={activeIndex}
+                />
               );
             })
         )}
